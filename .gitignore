@@ -1,2 +1,5 @@
 # InteliJ Idea service folder
 .idea/
+
+# build out
+out/
