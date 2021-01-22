@@ -8,9 +8,9 @@ import java.util.List;
 
 public class Medication extends Item {
     private final String[] types = new String[]{"cream", "fluid", "gel", "salt", "tablet"};
-    public String name;
-    public String type;
-    public float dosage;
+    public final String name;
+    public final String type;
+    public final float dosage;
     private float residue;
 
     public Medication (final String name, float dosage, final String type) {
