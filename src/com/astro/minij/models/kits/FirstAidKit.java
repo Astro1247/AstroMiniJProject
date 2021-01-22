@@ -5,6 +5,7 @@ import com.astro.minij.exceptions.NoSpaceLeftInFirstAidKitException;
 import com.astro.minij.models.content.air.AmbuBag;
 import com.astro.minij.models.content.medication.Medication;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,8 +14,8 @@ public class FirstAidKit {
     public final short capacity;
     public final String size;
     public short usedCapacity;
-    public Medication[] medications;
-    public AmbuBag[] ambuBag;
+    public ArrayList<Medication> medications;
+    public ArrayList<AmbuBag> ambuBag;
 
     @Override
     public String toString() {
@@ -41,6 +42,8 @@ public class FirstAidKit {
             default -> throw new InvalidFirstAidKitSizeException(size);
         }
         this.usedCapacity = 0;
+        this.medications = new ArrayList<>();
+        this.ambuBag = new ArrayList<>();
     }
 
     private boolean isSizeBiggerOrEqual(String actualSize, String comparedSize) {
@@ -66,26 +69,14 @@ public class FirstAidKit {
     public void addMedication(Medication medication) {
         if(medication.capacityWeight > (this.capacity-this.usedCapacity)) throw new NoSpaceLeftInFirstAidKitException();
         if(!isSizeBiggerOrEqual(this.size, medication.minFirstAidKitSize)) throw new NoSpaceLeftInFirstAidKitException();
-        if(this.medications == null) this.medications = new Medication[0];
-        Medication[] newMedicationsArr = new Medication[this.medications.length + 1];
-        int i;
-        for (i = 0; i < this.medications.length; i++)
-            newMedicationsArr[i] = this.medications[i];
-        newMedicationsArr[this.medications.length] = medication;
-        this.medications = newMedicationsArr;
+        this.medications.add(medication);
         this.usedCapacity += medication.capacityWeight;
     }
 
     public void addAmbuBag(AmbuBag ambuBag) {
         if(ambuBag.capacityWeight > (this.capacity-this.usedCapacity)) throw new NoSpaceLeftInFirstAidKitException();
         if(!isSizeBiggerOrEqual(this.size, ambuBag.minFirstAidKitSize)) throw new NoSpaceLeftInFirstAidKitException();
-        if(this.medications == null) this.medications = new Medication[0];
-        AmbuBag[] newAmbuBagArr = new AmbuBag[this.ambuBag.length + 1];
-        int i;
-        for (i = 0; i < this.ambuBag.length; i++)
-            newAmbuBagArr[i] = this.ambuBag[i];
-        newAmbuBagArr[this.ambuBag.length] = ambuBag;
-        this.ambuBag = newAmbuBagArr;
+        this.ambuBag.add(ambuBag);
         this.usedCapacity += ambuBag.capacityWeight;
     }
 }
