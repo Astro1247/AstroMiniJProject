@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FirstAidKit {
-    private String[] allowedSizes = new String[]{"s", "m", "l", "xl"};
     public final short capacity;
     public final String size;
     public short usedCapacity;
@@ -23,22 +22,15 @@ public class FirstAidKit {
     }
 
     public FirstAidKit(String size) {
+        String[] allowedSizes = new String[]{"s", "m", "l", "xl"};
         List<String> allowedSizesList = Arrays.asList(allowedSizes);
         if(!allowedSizesList.contains(size)) throw new InvalidFirstAidKitSizeException(size);
         this.size = size;
         switch (size) {
-            case "s" -> {
-                this.capacity = 100;
-            }
-            case "m" -> {
-                this.capacity = 250;
-            }
-            case "l" -> {
-                this.capacity = 500;
-            }
-            case "xl" -> {
-                this.capacity = 1000;
-            }
+            case "s" -> this.capacity = 100;
+            case "m" -> this.capacity = 250;
+            case "l" -> this.capacity = 500;
+            case "xl" -> this.capacity = 1000;
             default -> throw new InvalidFirstAidKitSizeException(size);
         }
         this.usedCapacity = 0;
