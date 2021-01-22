@@ -12,7 +12,7 @@ public class Main {
         FirstAidKit firstAidKit = new FirstAidKit("m");
         Medication analgin = new Medication("Анальгин", 1, Medication.medicationType.tablet);
         firstAidKit.addMedication(analgin);
-        System.out.println(firstAidKit.medications.length);
+        System.out.println(firstAidKit.medications.size());
         System.out.println(firstAidKit.toString());
     }
 }
