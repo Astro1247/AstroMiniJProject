@@ -47,12 +47,13 @@ public class Medication extends Item {
     }
 
     public Medication (final String name, float dosage, medicationType type) {
-        if (name.equals("")) throw new NotEmptyStringExpectedException();
-        if (name.length() > 32) throw new TooLongNameException();
-        //List<String> typesList = Arrays.asList(types);
-        //if (!types.contains(type)) throw new TypeNotFoundException();
-        if (dosage < 0.1) throw new TooLowDosageException();
-
+        try {
+            if (name.equals("")) throw new NotEmptyStringExpectedException();
+            if (name.length() > 32) throw new TooLongNameException();
+            if (dosage < 0.1) throw new TooLowDosageException();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.name = name;
         this.type = type;
         this.dosage = dosage;
