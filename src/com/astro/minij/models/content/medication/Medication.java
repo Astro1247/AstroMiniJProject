@@ -20,6 +20,32 @@ public class Medication extends Item {
         tablet
     }
 
+    public float getResidue() {
+        return this.residue;
+    }
+
+    public void refillResidue() {
+        switch (this.type) {
+            case cream, gel -> {
+                final int koef = 5;
+                this.residue = this.dosage*koef;
+            }
+            case fluid -> {
+                final int koef = 15;
+                this.residue = this.dosage*koef;
+            }
+            case salt -> {
+                final int koef = 50;
+                this.residue = this.dosage*koef;
+            }
+            case tablet -> {
+                final int koef = 20;
+                this.residue = this.dosage*koef;
+            }
+            default -> throw new TypeNotFoundException();
+        }
+    }
+
     public Medication (final String name, float dosage, medicationType type) {
         if (name.equals("")) throw new NotEmptyStringExpectedException();
         if (name.length() > 32) throw new TooLongNameException();
