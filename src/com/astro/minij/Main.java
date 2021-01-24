@@ -3,13 +3,87 @@ package com.astro.minij;
 import com.astro.minij.models.content.medication.Medication;
 import com.astro.minij.models.entity.Matrix;
 import com.astro.minij.models.entity.Vector;
+import com.astro.minij.models.entity.cpu.CPU;
+import com.astro.minij.models.entity.cpu.CPUProcess;
 import com.astro.minij.models.kits.FirstAidKit;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         System.out.println("Welcome to MiniJ project!");
-        threadingComparsionOnMatrixVectorMultiply();
+        //threadingComparsionOnMatrixVectorMultiply();
+        wakeUpCPUWorkers();
+    }
+
+    public static void wakeUpCPUWorkers() {
+        int cycles = 10;
+        int heartbeatRatePerSecond = 10;
+        int processesStarted = 0;
+
+        CPU cpu1 = new CPU("1");
+        CPU cpu2 = new CPU("2");
+        cpu1.start();
+        cpu2.start();
+
+        ArrayList<CPUProcess> processesStack = new ArrayList<>();
+
+        for (int i = 0; i < cycles; i++) {
+            CPUProcess cpuProcess = new CPUProcess(getRandomInt(0, 5));
+            if(!cpu1.isBusy()) {
+                cpu1.loadProcess(cpuProcess);
+                processesStarted++;
+            }
+            else if (!cpu2.isBusy()) {
+                cpu2.loadProcess(cpuProcess);
+                processesStarted++;
+            }
+            else processesStack.add(cpuProcess);
+
+            try {
+                Thread.sleep(1000);
+            }
+            catch(InterruptedException e) {}
+        }
+
+        // Heartbeat
+        while (processesStarted < cycles) {
+            System.out.println("[BEAT] Started " + processesStarted + " of " + cycles);
+            if(!cpu1.isBusy()) {
+                if(processesStack.size() > 0) {
+                    cpu1.loadProcess(processesStack.get(0));
+                    processesStack.remove(processesStack.get(0));
+                    processesStarted++;
+                } else continue;
+            }
+            if (!cpu2.isBusy()) {
+                if(processesStack.size() > 0) {
+                    cpu2.loadProcess(processesStack.get(0));
+                    processesStack.remove(processesStack.get(0));
+                    processesStarted++;
+                } else continue;
+            }
+
+            try {
+                Thread.sleep((long) Math.floor(1000/heartbeatRatePerSecond));
+            }
+            catch(InterruptedException e) {}
+        }
+        while (cpu1.isBusy() || cpu2.isBusy()) {
+            System.out.println("Awaiting for CPU's to end their work.");
+            try {
+                Thread.sleep((long) Math.floor(1000/heartbeatRatePerSecond));
+            }
+            catch(InterruptedException e) {}
+        }
+        System.out.println("All processes were complete! Shuttind down CPU's...");
+        try {
+            cpu1.join();
+            cpu2.join();
+        } catch (InterruptedException e) {}
+        System.exit(0);
     }
 
     public static void threadingComparsionOnMatrixVectorMultiply() throws InterruptedException {
@@ -113,6 +187,12 @@ public class Main {
     public static float getRandomFloat(float min, float max) {
         double random = min + Math.random() * (max - min);
         return (float) random;
+    }
+
+    private static Random rand = new Random();
+    public static int getRandomInt(int min, int max) {
+        int tmp = min + (rand.nextInt() % (max - min + 1));
+        return tmp;
     }
 
     public static void firstAidKit() {
