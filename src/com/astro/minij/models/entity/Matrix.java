@@ -26,4 +26,12 @@ public class Matrix {
         if(width <= 0 || height <= 0) throw new IllegalArgumentException();
         return this.values[width-1][height-1]==null?null:((float) this.values[width-1][height-1].get(0));
     }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
 }
