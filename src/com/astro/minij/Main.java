@@ -1,6 +1,5 @@
 package com.astro.minij;
 
-import com.astro.minij.models.content.air.AmbuBag;
 import com.astro.minij.models.content.medication.Medication;
 import com.astro.minij.models.entity.Matrix;
 import com.astro.minij.models.entity.Vector;
@@ -12,16 +11,38 @@ public class Main {
         System.out.println("Welcome to MiniJ project!");
         int n = 100;
         Matrix matrix = new Matrix(n, n);
-        for (int i = 1; i < matrix.getWidth()+1; i++) {
-            for (int j = 1; j < matrix.getHeight()+1; j++) {
+        for (int i = 0; i < matrix.getWidth(); i++) {
+            for (int j = 0; j < matrix.getHeight(); j++) {
                 matrix.setValue(i, j, getRandomFloat(-n, n));
             }
         }
         Vector vector = new Vector(n);
-        for(int i = 1; i < vector.getSize(); i++) {
+        for(int i = 0; i < vector.getSize(); i++) {
             vector.setValue(i, getRandomFloat(-n, n));
         }
-        System.out.println(matrix.getValue(n, n));
+        long minSingleThreadExecTime = Long.MAX_VALUE;
+        long maxSingleThreadExecTime = Long.MIN_VALUE;
+        for (int i = 0; i < 100; i++) {
+            long execTime = singleThreadMatrixVectorMultiplier(matrix, vector);
+            if (minSingleThreadExecTime > execTime) minSingleThreadExecTime = execTime;
+            if (maxSingleThreadExecTime < execTime) maxSingleThreadExecTime = execTime;
+        }
+        System.out.println("Single thread:\nMin exec time: " + minSingleThreadExecTime + "\nMax exec time: " + maxSingleThreadExecTime);
+    }
+
+    public static long singleThreadMatrixVectorMultiplier(Matrix matrix, Vector vector) {
+        long startTime = System.nanoTime();
+        Vector resultVector = new Vector(matrix.getHeight());
+        for (int i = 0; i < matrix.getHeight(); i++) {
+            float newValue = 0;
+            for (int j = 0; j < matrix.getWidth(); j++) {
+                newValue += matrix.getValue(j, i)*vector.getValue(j);
+            }
+            resultVector.setValue(i, newValue);
+        }
+        long stopTime = System.nanoTime();
+        //System.out.println("Single thread execution time: " + (stopTime - startTime));
+        return stopTime - startTime;
     }
 
     public static float getRandomFloat(float min, float max) {

@@ -13,17 +13,23 @@ public class Vector {
     }
 
     public void setValue(int index, float value) {
-        if(index <= 0) throw new IllegalArgumentException();
-        this.values[index-1] = new ArrayList();
-        this.values[index-1].add(value);
+        if(index < 0) throw new IllegalArgumentException();
+        this.values[index] = new ArrayList();
+        this.values[index].add(value);
     }
 
     public float getValue(int index) {
-        if(index <= 0) throw new IllegalArgumentException();
-        return this.values[index-1]==null?null:((float) this.values[index-1].get(0));
+        if(index < 0) throw new IllegalArgumentException();
+        return this.values[index]==null?null:((float) this.values[index].get(0));
     }
 
     public int getSize() {
         return this.size;
+    }
+
+    public void display() {
+        for (int j = 0; j < this.size; j++) {
+            System.out.println(this.getValue(j) + " ");
+        }
     }
 }
