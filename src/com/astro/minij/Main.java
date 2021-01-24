@@ -13,14 +13,18 @@ import java.util.Random;
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
-        System.out.println("Welcome to MiniJ project!");
+        System.out.println("Welcome to MiniJ project!\n");
+
         //threadingComparsionOnMatrixVectorMultiply();
         wakeUpCPUWorkers();
+
+        System.out.println("\nThank you for using MiniJ project.");
+        System.out.println("Shutting down system...");
     }
 
     public static void wakeUpCPUWorkers() {
         int cycles = 10;
-        int heartbeatRatePerSecond = 10;
+        int heartbeatRPM = 60;
         int processesStarted = 0;
 
         CPU cpu1 = new CPU("1");
@@ -30,6 +34,7 @@ public class Main {
 
         ArrayList<CPUProcess> processesStack = new ArrayList<>();
 
+        System.out.println("Starting process generation...");
         for (int i = 0; i < cycles; i++) {
             CPUProcess cpuProcess = new CPUProcess(getRandomInt(0, 5));
             if(!cpu1.isBusy()) {
@@ -47,7 +52,9 @@ public class Main {
             }
             catch(InterruptedException e) {}
         }
+        System.out.println("Process generation complete.");
 
+        System.out.println("Starting heartbeat...");
         // Heartbeat
         while (processesStarted < cycles) {
             System.out.println("[BEAT] Started " + processesStarted + " of " + cycles);
@@ -67,23 +74,25 @@ public class Main {
             }
 
             try {
-                Thread.sleep((long) Math.floor(1000/heartbeatRatePerSecond));
+                Thread.sleep((long) Math.floor((60 * 1000)/heartbeatRPM));
             }
             catch(InterruptedException e) {}
         }
+        System.out.println("Processes stack is empty, heartbeat shut down");
         while (cpu1.isBusy() || cpu2.isBusy()) {
             System.out.println("Awaiting for CPU's to end their work.");
             try {
-                Thread.sleep((long) Math.floor(1000/heartbeatRatePerSecond));
+                Thread.sleep((long) Math.floor((60 * 1000)/heartbeatRPM));
             }
             catch(InterruptedException e) {}
         }
         System.out.println("All processes were complete! Shuttind down CPU's...");
         try {
+            cpu1.shutdown();
             cpu1.join();
+            cpu2.shutdown();
             cpu2.join();
         } catch (InterruptedException e) {}
-        System.exit(0);
     }
 
     public static void threadingComparsionOnMatrixVectorMultiply() throws InterruptedException {

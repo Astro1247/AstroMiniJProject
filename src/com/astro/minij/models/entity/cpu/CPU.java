@@ -6,6 +6,8 @@ public class CPU extends Thread {
 
     private CPUProcess workingProcess;
 
+    private boolean active;
+
     public CPU (String name) {
         this.processorName = name;
     }
@@ -18,10 +20,15 @@ public class CPU extends Thread {
         this.workingProcess = process;
     }
 
+    public void shutdown() {
+        this.active = false;
+    }
+
     @Override
     public void run(){
         System.out.println("[INIT] Initialising CPU#" + this.processorName);
-        while(true) {
+        this.active = true;
+        while(this.active) {
             if (this.workingProcess != null) {
                 System.out.println("[START] CPU#" + this.processorName + " Process#" + workingProcess.getId());
                 this.busy = true;
@@ -34,7 +41,7 @@ public class CPU extends Thread {
                 }
                 catch ( InterruptedException e ) {}
                 this.busy = false;
-                System.out.println("[FINISH]: CPU#" + this.processorName + " Process#" + workingProcess.getId());
+                System.out.println("[FINISH] CPU#" + this.processorName + " Process#" + workingProcess.getId());
                 this.workingProcess = null;
             }
             try {
