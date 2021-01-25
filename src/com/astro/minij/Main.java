@@ -26,14 +26,13 @@ public class Main {
         int cycles = 10;
         int heartbeatRPM = 60;
         int processesStarted = 0;
-        int maxInStack = 0;
+        int processesTookFromFirstStack = 0;
 
         CPU cpu1 = new CPU("1");
-        CPU cpu2 = new CPU("2");
         cpu1.start();
-        cpu2.start();
 
-        ArrayList<CPUProcess> processesStack = new ArrayList<>();
+        ArrayList<CPUProcess> processesStack1 = new ArrayList<>();
+        ArrayList<CPUProcess> processesStack2 = new ArrayList<>();
 
         System.out.println("Starting process generation...");
         for (int i = 0; i < cycles; i++) {
@@ -42,38 +41,35 @@ public class Main {
                 cpu1.loadProcess(cpuProcess);
                 processesStarted++;
             }
-            else if (!cpu2.isBusy()) {
-                cpu2.loadProcess(cpuProcess);
-                processesStarted++;
-            }
-            else processesStack.add(cpuProcess);
-
-            if(maxInStack < processesStack.size()) maxInStack = processesStack.size();
+            else if (processesStack1.size() <= processesStack2.size()) processesStack1.add(cpuProcess);
+            else processesStack2.add(cpuProcess);
 
             try {
                 Thread.sleep(1000);
             }
             catch(InterruptedException e) {}
         }
-        System.out.println("Process generation complete.");
+        System.out.println("Generation process complete.");
 
         System.out.println("Starting heartbeat...");
         // Heartbeat
         while (processesStarted < cycles) {
             System.out.println("[BEAT] Started " + processesStarted + " of " + cycles);
             if(!cpu1.isBusy()) {
-                if(processesStack.size() > 0) {
-                    cpu1.loadProcess(processesStack.get(0));
-                    processesStack.remove(processesStack.get(0));
-                    processesStarted++;
-                } else continue;
-            }
-            if (!cpu2.isBusy()) {
-                if(processesStack.size() > 0) {
-                    cpu2.loadProcess(processesStack.get(0));
-                    processesStack.remove(processesStack.get(0));
-                    processesStarted++;
-                } else continue;
+                if(processesStack1.size() >= processesStack2.size()) {
+                    if (processesStack1.size() > 0) {
+                        cpu1.loadProcess(processesStack1.get(0));
+                        processesTookFromFirstStack++;
+                        processesStack1.remove(processesStack1.get(0));
+                        processesStarted++;
+                    } else continue;
+                } else {
+                    if (processesStack2.size() > 0) {
+                        cpu1.loadProcess(processesStack2.get(0));
+                        processesStack2.remove(processesStack2.get(0));
+                        processesStarted++;
+                    } else continue;
+                }
             }
 
             try {
@@ -81,9 +77,8 @@ public class Main {
             }
             catch(InterruptedException e) {}
         }
-        System.out.println("Maximum in process stack were " + maxInStack + " processes.");
         System.out.println("Processes stack is empty, heartbeat shut down");
-        while (cpu1.isBusy() || cpu2.isBusy()) {
+        while (cpu1.isBusy()) {
             System.out.println("Awaiting for CPU's to end their work.");
             try {
                 Thread.sleep((long) Math.floor((60 * 1000)/heartbeatRPM));
@@ -94,9 +89,8 @@ public class Main {
         try {
             cpu1.shutdown();
             cpu1.join();
-            cpu2.shutdown();
-            cpu2.join();
         } catch (InterruptedException e) {}
+        System.out.println(processesTookFromFirstStack + " of " + processesStarted + " was taken from first stack. (" + (((double) processesTookFromFirstStack/(double) processesStarted)*100) + "%)");
     }
 
     public static void threadingComparsionOnMatrixVectorMultiply() throws InterruptedException {
