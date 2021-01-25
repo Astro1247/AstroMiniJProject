@@ -124,9 +124,6 @@ public class Main {
         System.out.println("Single thread:\nMin exec time: " + minSingleThreadExecTime + "\nMax exec time: " + maxSingleThreadExecTime);
         System.out.println("Total measurement time took: " + (stopSingleTime - startSingleTime));
 
-        //ThreadMult threadSample = new ThreadMult(matrix, vector, 5);
-        //threadSample.run();
-
         //singleThreadMatrixVectorMultiplier(matrix, vector);
         System.out.println("==========");
         //multiThreadMatrixVectorMultiplier(matrix, vector, 5);
