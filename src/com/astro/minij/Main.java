@@ -26,6 +26,7 @@ public class Main {
         int cycles = 10;
         int heartbeatRPM = 60;
         int processesStarted = 0;
+        int maxInStack = 0;
 
         CPU cpu1 = new CPU("1");
         CPU cpu2 = new CPU("2");
@@ -46,6 +47,8 @@ public class Main {
                 processesStarted++;
             }
             else processesStack.add(cpuProcess);
+
+            if(maxInStack < processesStack.size()) maxInStack = processesStack.size();
 
             try {
                 Thread.sleep(1000);
@@ -78,6 +81,7 @@ public class Main {
             }
             catch(InterruptedException e) {}
         }
+        System.out.println("Maximum in process stack were " + maxInStack + " processes.");
         System.out.println("Processes stack is empty, heartbeat shut down");
         while (cpu1.isBusy() || cpu2.isBusy()) {
             System.out.println("Awaiting for CPU's to end their work.");
@@ -142,8 +146,10 @@ public class Main {
         System.out.println("==========");
 
         if((stopMultiTime - startMultiTime) < (stopSingleTime - startSingleTime)) {
+            //int percent = (int) (Math.floor(((stopSingleTime - startSingleTime)/(stopMultiTime - startMultiTime))));
             System.out.println("So, multi thread was faster by: " + ((stopSingleTime - startSingleTime) - (stopMultiTime - startMultiTime)));
         } else if ((stopMultiTime - startMultiTime) > (stopSingleTime - startSingleTime)) {
+            //int percent = (int) (Math.floor(((stopMultiTime - startMultiTime)/(stopSingleTime - startSingleTime))));
             System.out.println("So, single thread was faster by: " + ((stopMultiTime - startMultiTime) - (stopSingleTime - startSingleTime)));
         } else {
             System.out.println("So, single and multi thread comparsion got same exec time. WOW! IMPOSSIBLE!");
@@ -238,7 +244,7 @@ class ThreadMult extends Thread {
     @Override
     public void run(){
         for (int i = startRow; i < endRow; i++) {
-        //for (int i = 0; i < endRow-startRow; i++) {
+            //for (int i = 0; i < endRow-startRow; i++) {
             float newValue = 0;
             for (int j = 0; j < matrix.getWidth(); j++) {
                 newValue += matrix.getValue(j, i)*vector.getValue(j);
