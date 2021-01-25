@@ -20,13 +20,40 @@ public class Medication extends Item {
         tablet
     }
 
-    public Medication (final String name, float dosage, medicationType type) {
-        if (name.equals("")) throw new NotEmptyStringExpectedException();
-        if (name.length() > 32) throw new TooLongNameException();
-        //List<String> typesList = Arrays.asList(types);
-        //if (!types.contains(type)) throw new TypeNotFoundException();
-        if (dosage < 0.1) throw new TooLowDosageException();
+    public float getResidue() {
+        return this.residue;
+    }
 
+    public void refillResidue() {
+        switch (this.type) {
+            case cream, gel -> {
+                final int koef = 5;
+                this.residue = this.dosage*koef;
+            }
+            case fluid -> {
+                final int koef = 15;
+                this.residue = this.dosage*koef;
+            }
+            case salt -> {
+                final int koef = 50;
+                this.residue = this.dosage*koef;
+            }
+            case tablet -> {
+                final int koef = 20;
+                this.residue = this.dosage*koef;
+            }
+            default -> throw new TypeNotFoundException();
+        }
+    }
+
+    public Medication (final String name, float dosage, medicationType type) {
+        try {
+            if (name.equals("")) throw new NotEmptyStringExpectedException();
+            if (name.length() > 32) throw new TooLongNameException();
+            if (dosage < 0.1) throw new TooLowDosageException();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.name = name;
         this.type = type;
         this.dosage = dosage;
